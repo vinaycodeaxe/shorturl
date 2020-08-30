@@ -27,7 +27,7 @@ public class Url {
     @Column(name = "client_id", nullable = false)
     private Long clientId;
 
-    @Column(name = "short_url_key", nullable = false)
+    @Column(name = "short_url_key", nullable = false,unique = true,length = 500)
     private String shortUrlKey;
 
     @Column(name = "long_url", nullable = false)
