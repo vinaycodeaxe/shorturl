@@ -10,18 +10,26 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(code = HttpStatus.NOT_FOUND)
 public class NoDataFoundException extends RuntimeException {
 
-	private static final long serialVersionUID = -59926282956449508L;
-	public static final String MESSAGE = "No Data found for ";
-	public static final String HAVING_ID = " having id ";
+	private static final long serialVersionUID = -5318591489806278624L;
+
+	private String message;
+	private String code;
 
 
-	public <T> NoDataFoundException(T clazz, Long id) {
-		super(MESSAGE + clazz + HAVING_ID + id);
+	public NoDataFoundException(String message) {
+		super(message);
+		this.message = message;
 	}
 
-	public <T> NoDataFoundException(T clazz, Long id, Throwable t) {
-		super(MESSAGE + clazz + HAVING_ID + id, t);
+	public NoDataFoundException(String message, String code) {
+		super(message);
+		this.message = message;
+		this.code = code;
+	}
 
+	public NoDataFoundException(String message, Throwable t) {
+		super(message, t);
+		this.message = message;
 	}
 
 }

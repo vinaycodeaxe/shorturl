@@ -1,52 +1,46 @@
 package com.observe.shorturl.web.controllers;
 
 
+import com.observe.shorturl.dto.request.ShortUrlRequest;
+import com.observe.shorturl.service.ShortUrlService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.net.URI;
 
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class ShortUrlController {
 
+    private final ShortUrlService shortUrlService;
 
-    @PostMapping("/createURL")
-    public ResponseEntity<String> getShortenedURL() {
+    @PostMapping("/api/shortUrl")
+    @ApiOperation("Create new Short URl")
+    public ResponseEntity<String> getShortenedURL(@RequestBody @Valid ShortUrlRequest shortUrlRequest) {
+        return ResponseEntity.ok(shortUrlService.createShortUrl(shortUrlRequest));
     }
 
-//    public static final String ENDPOINT = "/api/v2/projects";
-//    public static final String ENDPOINT_ID = "/{id}";
-//    public static final String PATH_VARIABLE_ID = "id";
-//    private static final String API_PARAM_ID = "ID";
-//
-//
-//    private final ProjectService projectService;
-//
-//    @ApiOperation("Get a Project")
-//    @GetMapping(ENDPOINT_ID)
-//    public Project getProject(@ApiParam(name = API_PARAM_ID, required = true)
-//                              @PathVariable(PATH_VARIABLE_ID) final long projectId) {
-//        return projectService.getProject(projectId);
-//    }
-//
-//
-//    @PostMapping
-//    @ApiOperation("Create a Project")
-//    public ResponseEntity<String> createProject(
-//            @Valid @RequestBody ProjectRequest projectRequest) {
-//        Project project = projectService.createProject(projectRequest);
-//        UriComponents uriComponents =
-//                UriComponentsBuilder.fromUriString(ENDPOINT + ENDPOINT_ID).buildAndExpand(project.getId());
-//        return ResponseEntity.created(uriComponents.toUri()).build();
-//    }
-//
-//
-//    @ApiOperation("Update a Project")
-//    @PatchMapping(ENDPOINT_ID)
-//    public ResponseEntity<Project> updateProject(@PathVariable(PATH_VARIABLE_ID) final long projectId,
-//                                                 @RequestBody UpdateProjectRequest projectRequest) {
-//        return ResponseEntity.ok(projectService.updateProject(projectId, projectRequest));
-//    }
+    @GetMapping("/{shortUrlKey}")
+    @ApiOperation("Redirection to original url via http code 307.")
+    public ResponseEntity<Void> redirectToOriginalUrl(@PathVariable("shortUrlKey") String shortUrlKey) {
+        String originalUrl = shortUrlService.getOriginalURL(shortUrlKey);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(URI.create(originalUrl));
+        return new ResponseEntity<>(httpHeaders, HttpStatus.TEMPORARY_REDIRECT);
+    }
+
+    @GetMapping("/api/hit-count/{shortUrlKey}")
+    @ApiOperation("Number of times ‘getOriginalURL’ function was called using that")
+    public ResponseEntity<Integer> getRedirectCount(@PathVariable("shortUrlKey") String shortUrlKey) {
+        return ResponseEntity.ok(shortUrlService.getRedirectCount(shortUrlKey));
+    }
+
 }
