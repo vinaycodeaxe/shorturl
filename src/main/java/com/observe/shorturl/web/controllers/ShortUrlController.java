@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,8 @@ public class ShortUrlController {
 
     private final ShortUrlService shortUrlService;
 
-    @PostMapping("/api/shortUrl")
+
+    @PostMapping(value = "/api/v1/shorturl", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("Create new Short URl")
     public ResponseEntity<String> getShortenedURL(@RequestBody @Valid ShortUrlRequest shortUrlRequest) {
         return ResponseEntity.ok(shortUrlService.createShortUrl(shortUrlRequest));
@@ -37,7 +39,7 @@ public class ShortUrlController {
         return new ResponseEntity<>(httpHeaders, HttpStatus.TEMPORARY_REDIRECT);
     }
 
-    @GetMapping("/api/hit-count/{shortUrlKey}")
+    @GetMapping(value = "/api/v1/hit/{shortUrlKey}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("Number of times ‘getOriginalURL’ function was called using that")
     public ResponseEntity<Integer> getRedirectCount(@PathVariable("shortUrlKey") String shortUrlKey) {
         return ResponseEntity.ok(shortUrlService.getRedirectCount(shortUrlKey));
