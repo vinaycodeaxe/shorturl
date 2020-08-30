@@ -23,7 +23,7 @@ public class KeyGenerationServiceImpl implements KeyGenerationService {
 
     @Override
     public String generateShortUrlKey(ShortUrlRequest shortUrlRequest) throws NoSuchAlgorithmException {
-        log.info("generateShortUrlKey {}", shortUrlRequest);
+        log.info("generateShortUrlKey with shortUrlRequest {}", shortUrlRequest);
         String encodedKey = getEncodedKey(shortUrlRequest.getLongUrl(), shortUrlRequest.getClientId(), false);
         int tryCount = 0;
         while (urlRepository.findByShortUrlKey(encodedKey).isPresent()) {
@@ -38,7 +38,7 @@ public class KeyGenerationServiceImpl implements KeyGenerationService {
     }
 
     private String getEncodedKey(String url, Long clientId, boolean random) throws NoSuchAlgorithmException {
-        log.info("getEncodedKey {} {} {}", url, clientId, random);
+        log.info("getEncodedKey url {} , clientId {}, random {}", url, clientId, random);
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         String baseString = url + clientId + (!random ? "" : new Random(System.currentTimeMillis()).nextInt(100000));
         byte[] hash = digest.digest(baseString.getBytes(StandardCharsets.UTF_8));

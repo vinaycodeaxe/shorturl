@@ -29,7 +29,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
 
     @Override
     public String createShortUrl(ShortUrlRequest shortUrlRequest) {
-        log.info("createShortUrl {}", shortUrlRequest);
+        log.info("createShortUrl with shortUrlRequest {}", shortUrlRequest);
         Url url = urlRepository.findByLongUrlAndClientIdAndIsActiveTrue(shortUrlRequest.getLongUrl(), shortUrlRequest.getClientId())
                 .orElse(null);
         if (url != null) {
